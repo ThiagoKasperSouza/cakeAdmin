@@ -1,0 +1,103 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.metric-card {
+  position: relative;
+  display: flex;
+  min-height: 104px;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 15px 13px;
+  border: 1px solid #eee8df;
+  border-radius: 10px;
+  background: var(--cream);
+  box-shadow: 0 2px 6px rgb(56 37 34 / 3%);
+}
+
+.metric-icon {
+  display: grid;
+  width: 37px;
+  height: 37px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 11px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.gold {
+  background: #fbefcd;
+  color: #c58232;
+}
+
+.peach {
+  background: #f8e9df;
+  color: #b77c5c;
+}
+
+.rose {
+  background: #f7e6e2;
+  color: #ae6c5a;
+}
+
+.cream {
+  background: #f0eadc;
+  color: #8d774f;
+}
+
+.metric-copy {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.metric-label {
+  overflow: hidden;
+  color: #8e8175;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metric-value {
+  color: var(--ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 21px;
+  line-height: 1;
+}
+
+.metric-detail {
+  overflow: hidden;
+  color: #a2988c;
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metric-detail b {
+  color: #679275;
+  font-weight: 700;
+}
+
+.metric-arrow {
+  position: absolute;
+  top: 13px;
+  right: 12px;
+  color: #ccb99f;
+  font-size: 12px;
+}
+
+@media (max-width: 480px) {
+  .metric-card {
+    min-height: 94px;
+    gap: 9px;
+    padding: 12px 10px;
+  }
+
+  .metric-icon {
+    width: 32px;
+    height: 32px;
+  }
+}

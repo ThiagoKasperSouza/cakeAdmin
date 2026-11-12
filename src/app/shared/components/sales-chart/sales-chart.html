@@ -1,0 +1,37 @@
+<article class="chart-panel">
+  <header class="chart-heading">
+    <div>
+      <h2>Visão geral de vendas</h2>
+      <p>Vendas: {{ periodLabel.toLowerCase() }}</p>
+    </div>
+    <span class="chart-legend"><i></i> Vendas</span>
+  </header>
+  <div class="chart">
+    <div class="y-labels" aria-hidden="true">
+      @for (label of yAxisLabels; track $index) {
+        <span>{{ label }}</span>
+      }
+    </div>
+    <svg
+      viewBox="0 0 640 180"
+      role="img"
+      [attr.aria-label]="'Gráfico de vendas: ' + periodLabel.toLowerCase()"
+    >
+      <path class="grid-line" d="M0 18H640 M0 64H640 M0 110H640 M0 156H640" />
+      <polygon class="area" [attr.points]="areaPoints" />
+      <polyline class="trend-line" [attr.points]="chartPoints" />
+      @if (points.length > 1) {
+        <circle
+          cx="640"
+          [attr.cy]="150 - (points[points.length - 1].sales / maxValue) * 135"
+          r="4"
+        />
+      }
+    </svg>
+    <div class="x-labels" aria-hidden="true">
+      @for (point of points; track point.label) {
+        <span>{{ point.label }}</span>
+      }
+    </div>
+  </div>
+</article>

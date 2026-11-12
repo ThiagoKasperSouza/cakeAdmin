@@ -1,0 +1,118 @@
+<section class="management-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">VENDAS PERSONALIZADAS</p>
+      <h1>Orçamentos</h1>
+      <p class="subtitle">Organize pedidos especiais e acompanhe cada negociação.</p>
+    </div>
+    <button class="primary-button" type="button" disabled title="Disponível em breve">
+      <span aria-hidden="true">＋</span> Novo orçamento
+    </button>
+  </header>
+
+  <section class="summary-cards" aria-label="Resumo dos orçamentos">
+    <article>
+      <span class="summary-icon gold" aria-hidden="true">▤</span
+      ><span><small>Total este mês</small><strong>28</strong></span
+      ><b>+6,5%</b>
+    </article>
+    <article>
+      <span class="summary-icon peach" aria-hidden="true">◷</span
+      ><span><small>Aguardando resposta</small><strong>12</strong></span
+      ><b class="neutral">4 novos</b>
+    </article>
+    <article>
+      <span class="summary-icon green" aria-hidden="true">✓</span
+      ><span><small>Convertidos em pedidos</small><strong>16</strong></span
+      ><b>57% de conversão</b>
+    </article>
+  </section>
+
+  <article class="table-panel">
+    <div class="table-heading">
+      <div>
+        <h2>Todos os orçamentos</h2>
+        <p>Propostas recentes para seus clientes</p>
+      </div>
+      <span class="total-badge">28 propostas</span>
+    </div>
+    <div class="filters" aria-label="Filtrar por status">
+      @for (filter of filters; track filter) {
+        <button
+          type="button"
+          [class.selected]="activeFilter === filter"
+          (click)="setFilter(filter)"
+        >
+          {{ filter }}
+        </button>
+      }
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Descrição</th>
+            <th>Data</th>
+            <th>Valor</th>
+            <th>Status</th>
+            <th><span class="visually-hidden">Ações</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (budget of filteredBudgets; track budget.code) {
+            <tr>
+              <td>
+                <span class="customer-cell"
+                  ><i>{{ budget.initials }}</i
+                  ><span
+                    ><strong>{{ budget.customer }}</strong
+                    ><small>{{ budget.code }}</small></span
+                  ></span
+                >
+              </td>
+              <td class="description">{{ budget.description }}</td>
+              <td>{{ budget.date }}</td>
+              <td class="amount">{{ budget.amount }}</td>
+              <td>
+                <span
+                  class="status"
+                  [class]="
+                    'status ' +
+                    (budget.status === 'Aprovado'
+                      ? 'approved'
+                      : budget.status === 'Recusado'
+                        ? 'declined'
+                        : 'pending')
+                  "
+                  >{{ budget.status }}</span
+                >
+              </td>
+              <td>
+                <button
+                  class="more-button"
+                  type="button"
+                  [attr.aria-label]="'Mais opções para ' + budget.code"
+                  disabled
+                >
+                  ···
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="empty-state" colspan="6">Nenhum orçamento encontrado.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <footer class="table-footer">
+      <span>Mostrando {{ filteredBudgets.length }} de 28 orçamentos</span
+      ><span
+        >Página 1 de 5 <button disabled aria-label="Página anterior">‹</button
+        ><button disabled aria-label="Próxima página">›</button></span
+      >
+    </footer>
+  </article>
+</section>

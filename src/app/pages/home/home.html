@@ -1,0 +1,35 @@
+<div class="workspace">
+  <app-workspace-sidebar
+    [activeSection]="activeSection()"
+    (sectionChange)="selectSection($event)"
+  />
+
+  <main class="main-content">
+    <app-workspace-header
+      [activeLabel]="activeLabel()"
+      [searchTerm]="searchTerm()"
+      (searchTermChange)="setSearch($event)"
+    />
+
+    <section class="page-content">
+      @switch (activeSection()) {
+        @case ('dashboard') {
+          <app-dashboard-overview [searchTerm]="searchTerm()" />
+        }
+        @case ('products') {
+          <app-product-management [searchTerm]="searchTerm()" />
+        }
+        @case ('budgets') {
+          <app-budget-management [searchTerm]="searchTerm()" />
+        }
+        @case ('team') {
+          <app-team-management [searchTerm]="searchTerm()" />
+        }
+      }
+      <footer class="page-footer">
+        <span>© 2026 Delizia Confeitaria Artesanal</span>
+        <span>Feito com carinho <b aria-label="amor">♥</b></span>
+      </footer>
+    </section>
+  </main>
+</div>

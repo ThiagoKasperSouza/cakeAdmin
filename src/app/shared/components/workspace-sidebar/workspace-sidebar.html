@@ -1,0 +1,41 @@
+<aside class="sidebar">
+  <a class="brand" href="/home" aria-label="Delizia início">
+    <span class="brand-mark" aria-hidden="true">DLZ</span>
+    <span class="brand-name">Delizia<small>CONFEITARIA ARTESANAL</small></span>
+  </a>
+
+  <p class="nav-caption">ESPAÇO DE TRABALHO</p>
+  <nav class="navigation" aria-label="Navegação principal">
+    @for (item of navigation; track item.id) {
+      <button
+        class="nav-item"
+        [class.active]="activeSection === item.id"
+        [attr.aria-current]="activeSection === item.id ? 'page' : null"
+        (click)="selectSection(item.id)"
+      >
+        <span class="nav-icon" aria-hidden="true">{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
+        @if (item.id === 'budgets') {
+          <span class="nav-count">4</span>
+        }
+      </button>
+    }
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="help-card">
+      <span class="help-icon" aria-hidden="true">?</span>
+      <strong>Precisa de ajuda?</strong>
+      <span>Estamos por aqui para você.</span>
+      <a href="mailto:suporte@doceetrigo.example"
+        >Falar com suporte <span aria-hidden="true">↗</span></a
+      >
+    </div>
+    <a class="logout-link" href="/">↪ <span>Sair da conta</span></a>
+    <div class="sidebar-user">
+      <span class="avatar">TS</span>
+      <span class="user-details"><strong>Thiago Souza</strong><small>Administrador</small></span>
+      <span class="user-menu" aria-hidden="true">···</span>
+    </div>
+  </div>
+</aside>

@@ -1,0 +1,31 @@
+<article class="summary-panel">
+  <header class="summary-heading">
+    <div>
+      <h2>Resumo de pedidos</h2>
+      <p>Pedidos: {{ periodLabel.toLowerCase() }}</p>
+    </div>
+    <span class="summary-icon" aria-hidden="true">▤</span>
+  </header>
+  <div class="summary-total">
+    <strong>{{ totalOrders }}</strong><span>pedidos</span>
+  </div>
+  <div
+    class="bar-chart"
+    role="img"
+    [attr.aria-label]="'Total de pedidos: ' + periodLabel.toLowerCase()"
+  >
+    @for (bar of bars; track bar.label) {
+      <div class="bar-column">
+        <span
+          class="bar"
+          [class.peak]="bar.orders === maxOrders"
+          [style.height.%]="bar.height"
+        ></span>
+        <small>{{ bar.label }}</small>
+      </div>
+    }
+  </div>
+  <div class="summary-foot">
+    <span><i></i> Pedidos no período</span><strong>{{ totalOrders }} no total</strong>
+  </div>
+</article>

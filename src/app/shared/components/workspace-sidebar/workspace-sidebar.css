@@ -1,0 +1,262 @@
+:host {
+  display: block;
+}
+
+.sidebar {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  padding: 28px 18px 16px;
+  background: var(--wine);
+  color: #fffaf5;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand-mark {
+  display: grid;
+  width: 43px;
+  height: 43px;
+  place-items: center;
+  border: 1px solid rgb(255 250 245 / 62%);
+  border-radius: 50%;
+  font-family: Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.brand-mark span {
+  color: var(--gold);
+}
+
+.brand-name {
+  font-family: Georgia, serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.06em;
+}
+
+.brand-name small {
+  display: block;
+  margin-top: 3px;
+  color: #e4c9a8;
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.19em;
+}
+
+.nav-caption {
+  margin: 48px 10px 12px;
+  color: #cbb0a0;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.navigation {
+  display: grid;
+  gap: 6px;
+}
+
+.nav-item {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #f2dfc9;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  transition:
+    background 150ms ease,
+    color 150ms ease;
+}
+
+.nav-item:hover {
+  background: rgb(255 255 255 / 9%);
+}
+
+.nav-item.active {
+  background: var(--gold);
+  color: var(--wine);
+  font-weight: 700;
+}
+
+.nav-icon {
+  display: grid;
+  width: 20px;
+  place-items: center;
+  font-size: 19px;
+  line-height: 1;
+}
+
+.nav-count {
+  display: grid;
+  width: 21px;
+  height: 21px;
+  place-items: center;
+  margin-left: auto;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 20%);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+}
+
+.help-card {
+  display: grid;
+  gap: 7px;
+  margin: 0 0 22px;
+  padding: 14px;
+  border: 1px solid rgb(255 250 245 / 16%);
+  border-radius: 10px;
+  background: rgb(255 250 245 / 6%);
+}
+
+.help-icon {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(243 180 87 / 20%);
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.help-card strong {
+  font-size: 11px;
+}
+
+.help-card > span:nth-of-type(2) {
+  color: #dfc9b8;
+  font-size: 10px;
+}
+
+.help-card a {
+  margin-top: 3px;
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.logout-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 10px 17px;
+  color: #e4c9a8;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 4px 0;
+  border-top: 1px solid rgb(255 250 245 / 15%);
+}
+
+.avatar {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #f0d7b6;
+  color: var(--wine);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.user-details {
+  display: grid;
+  gap: 3px;
+  font-size: 10px;
+}
+
+.user-details small {
+  color: #d3bca9;
+  font-size: 9px;
+}
+
+.user-menu {
+  margin-left: auto;
+  color: #e4c9a8;
+  font-size: 20px;
+}
+
+@media (max-width: 680px) {
+  .sidebar {
+    min-height: 0;
+    padding: 14px 16px 10px;
+  }
+
+  .brand {
+    padding: 0 4px 12px;
+  }
+
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .brand-name {
+    font-size: 17px;
+  }
+
+  .nav-caption,
+  .sidebar-bottom {
+    display: none;
+  }
+
+  .navigation {
+    display: flex;
+    gap: 3px;
+    overflow-x: auto;
+    padding: 0 0 4px;
+    scrollbar-width: none;
+  }
+
+  .navigation::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-item {
+    min-height: 38px;
+    flex: 0 0 auto;
+    gap: 5px;
+    padding: 0 7px;
+    font-size: 10px;
+  }
+
+  .nav-icon {
+    width: auto;
+    font-size: 16px;
+  }
+
+  .nav-count {
+    width: 17px;
+    height: 17px;
+  }
+}

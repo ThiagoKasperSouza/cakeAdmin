@@ -1,0 +1,14 @@
+<article class="metric-card">
+  <span class="metric-icon" [class]="'metric-icon ' + tone" aria-hidden="true">{{ icon }}</span>
+  <div class="metric-copy">
+    <span class="metric-label">{{ label }}</span>
+    <strong class="metric-value">{{ value }}</strong>
+    <span class="metric-detail">
+      @if (change) {
+        <b>{{ change }}</b>
+      }
+      {{ detail }}
+    </span>
+  </div>
+  <span class="metric-arrow" aria-hidden="true">↗</span>
+</article>

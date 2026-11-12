@@ -1,0 +1,133 @@
+:host {
+  display: block;
+}
+
+.topbar {
+  display: flex;
+  min-height: 76px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 38px;
+  border-bottom: 1px solid #eee8df;
+  background: var(--cream);
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #9c8e82;
+  font-size: 11px;
+}
+
+.breadcrumbs strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.search-box {
+  display: flex;
+  width: min(250px, 30vw);
+  height: 38px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  border: 1px solid #eee7dc;
+  border-radius: 8px;
+  background: #fffdf8;
+  color: #907c68;
+}
+
+.search-box > span {
+  font-size: 21px;
+}
+
+.search-box input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 11px;
+}
+
+.search-box kbd {
+  flex: 0 0 auto;
+  padding: 3px 4px;
+  border: 1px solid #eee7dc;
+  border-radius: 4px;
+  color: #a59688;
+  font-size: 8px;
+}
+
+.notification-button {
+  position: relative;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid #eee7dc;
+  border-radius: 50%;
+  background: var(--cream);
+  color: var(--wine);
+  font-size: 18px;
+}
+
+.notification-button i {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--cream);
+  border-radius: 50%;
+  background: #d98250;
+}
+
+.top-avatar {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #f8e7c7;
+  color: var(--wine);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+}
+
+@media (max-width: 680px) {
+  .topbar {
+    min-height: 60px;
+    padding: 0 18px;
+  }
+
+  .search-box {
+    width: min(190px, 45vw);
+  }
+
+  .search-box kbd,
+  .notification-button {
+    display: none;
+  }
+
+  .topbar-actions {
+    gap: 9px;
+  }
+}

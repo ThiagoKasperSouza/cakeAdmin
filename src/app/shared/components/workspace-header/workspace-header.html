@@ -1,0 +1,22 @@
+<header class="topbar">
+  <div class="breadcrumbs">
+    <span>Painel</span><span aria-hidden="true">/</span><strong>{{ activeLabel }}</strong>
+  </div>
+  <div class="topbar-actions">
+    <label class="search-box">
+      <span aria-hidden="true">⌕</span>
+      <input
+        type="search"
+        placeholder="Buscar..."
+        aria-label="Buscar"
+        [value]="searchTerm"
+        (input)="updateSearch($event)"
+      />
+      <kbd>⌘ K</kbd>
+    </label>
+    <button class="notification-button" aria-label="Notificações">
+      <span aria-hidden="true">♧</span><i></i>
+    </button>
+    <span class="top-avatar" aria-label="Usuário Thiago Souza">TS</span>
+  </div>
+</header>

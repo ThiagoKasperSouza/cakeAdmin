@@ -1,0 +1,113 @@
+<section class="management-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">CATÁLOGO DA LOJA</p>
+      <h1>Produtos</h1>
+      <p class="subtitle">Gerencie os produtos que fazem parte do seu dia a dia.</p>
+    </div>
+    <button class="primary-button" type="button" disabled title="Disponível em breve">
+      <span aria-hidden="true">＋</span> Novo produto
+    </button>
+  </header>
+
+  <section class="summary-cards" aria-label="Resumo do catálogo">
+    <article>
+      <span class="summary-icon gold" aria-hidden="true">▧</span
+      ><span><small>Total de produtos</small><strong>36</strong></span>
+    </article>
+    <article>
+      <span class="summary-icon green" aria-hidden="true">✓</span
+      ><span><small>Disponíveis</small><strong>31</strong></span>
+    </article>
+    <article>
+      <span class="summary-icon rose" aria-hidden="true">!</span
+      ><span><small>Estoque baixo</small><strong>3</strong></span>
+    </article>
+  </section>
+
+  <article class="table-panel">
+    <div class="table-heading">
+      <div>
+        <h2>Todos os produtos</h2>
+        <p>Confira e organize seu catálogo</p>
+      </div>
+      <button class="export-button" type="button" disabled title="Disponível em breve">
+        ⇩ <span>Exportar</span>
+      </button>
+    </div>
+    <div class="filters" aria-label="Filtrar por categoria">
+      @for (filter of filters; track filter) {
+        <button
+          type="button"
+          [class.selected]="activeFilter === filter"
+          (click)="setFilter(filter)"
+        >
+          {{ filter }}
+        </button>
+      }
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Categoria</th>
+            <th>Preço</th>
+            <th>Estoque</th>
+            <th>Status</th>
+            <th><span class="visually-hidden">Ações</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of filteredProducts; track product.name) {
+            <tr>
+              <td>
+                <span class="product-cell"
+                  ><i aria-hidden="true">{{ product.icon }}</i
+                  ><strong>{{ product.name }}</strong></span
+                >
+              </td>
+              <td>{{ product.category }}</td>
+              <td class="price">{{ product.price }}</td>
+              <td>{{ product.stock }} un.</td>
+              <td>
+                <span
+                  class="status"
+                  [class]="
+                    'status ' +
+                    (product.status === 'Disponível'
+                      ? 'available'
+                      : product.status === 'Estoque baixo'
+                        ? 'low'
+                        : 'unavailable')
+                  "
+                  >{{ product.status }}</span
+                >
+              </td>
+              <td class="row-action">
+                <button
+                  type="button"
+                  [attr.aria-label]="'Mais opções para ' + product.name"
+                  disabled
+                >
+                  ···
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="empty-state" colspan="6">Nenhum produto encontrado.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <footer class="table-footer">
+      <span>Mostrando {{ filteredProducts.length }} de 36 produtos</span
+      ><span
+        >Página 1 de 4 <button disabled aria-label="Página anterior">‹</button
+        ><button disabled aria-label="Próxima página">›</button></span
+      >
+    </footer>
+  </article>
+</section>

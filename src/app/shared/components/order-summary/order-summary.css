@@ -1,0 +1,138 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.summary-panel {
+  height: 100%;
+  min-height: 235px;
+  padding: 18px;
+  border: 1px solid #eee8df;
+  border-radius: 11px;
+  background: var(--cream);
+  box-shadow: 0 2px 6px rgb(56 37 34 / 3%);
+}
+
+.summary-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+h2,
+p {
+  margin: 0;
+}
+
+h2 {
+  color: var(--ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.summary-heading p {
+  margin-top: 5px;
+  color: #a19589;
+  font-size: 9px;
+}
+
+.summary-icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 9px;
+  background: #fbefcd;
+  color: #b9853e;
+}
+
+.summary-total {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.summary-total strong {
+  color: var(--ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 23px;
+}
+
+.summary-total span {
+  color: #9c8f82;
+  font-size: 9px;
+}
+
+.summary-total b {
+  margin-left: auto;
+  color: #679275;
+  font-size: 9px;
+}
+
+.bar-chart {
+  display: flex;
+  height: 91px;
+  justify-content: space-around;
+  align-items: flex-end;
+  gap: 7px;
+  margin-top: 7px;
+  padding: 0 4px;
+}
+
+.bar-column {
+  display: flex;
+  height: 100%;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+}
+
+.bar {
+  width: min(20px, 72%);
+  min-height: 8px;
+  border-radius: 8px 8px 4px 4px;
+  background: #efbd67;
+}
+
+.bar.peak {
+  background: #d99a45;
+}
+
+.bar-column small {
+  color: #a99d91;
+  font-size: 8px;
+}
+
+.summary-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #f1ece5;
+  color: #998b7e;
+  font-size: 8px;
+}
+
+.summary-foot span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.summary-foot i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold-deep);
+}
+
+.summary-foot strong {
+  color: #8d7d6e;
+  font-weight: 600;
+}

@@ -1,0 +1,75 @@
+<section class="management-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">QUEM FAZ ACONTECER</p>
+      <h1>Equipe</h1>
+      <p class="subtitle">Cuide das pessoas que colocam carinho em cada receita.</p>
+    </div>
+    <button class="primary-button" type="button" disabled title="Disponível em breve">
+      <span aria-hidden="true">＋</span> Convidar pessoa
+    </button>
+  </header>
+
+  <section class="summary-cards" aria-label="Resumo da equipe">
+    <article>
+      <span class="summary-icon gold" aria-hidden="true">♧</span
+      ><span><small>Pessoas na equipe</small><strong>8</strong></span>
+    </article>
+    <article>
+      <span class="summary-icon green" aria-hidden="true">✓</span
+      ><span><small>Trabalhando hoje</small><strong>6</strong></span>
+    </article>
+    <article>
+      <span class="summary-icon peach" aria-hidden="true">◷</span
+      ><span><small>Em folga hoje</small><strong>2</strong></span>
+    </article>
+  </section>
+
+  <article class="team-panel">
+    <div class="panel-heading">
+      <div>
+        <h2>Membros da equipe</h2>
+        <p>Uma equipe pequena, feita de grandes talentos</p>
+      </div>
+      <span class="team-count">8 pessoas</span>
+    </div>
+    <div class="team-list">
+      @for (member of filteredMembers; track member.email) {
+        <div class="team-row">
+          <span class="member-avatar" [class]="'member-avatar ' + member.color">{{
+            member.initials
+          }}</span>
+          <span class="member-name"
+            ><strong>{{ member.name }}</strong
+            ><small>{{ member.role }}</small></span
+          >
+          <span class="member-contact"
+            ><small>E-mail</small><a [href]="'mailto:' + member.email">{{ member.email }}</a></span
+          >
+          <span class="member-contact phone"
+            ><small>Telefone</small><span>{{ member.phone }}</span></span
+          >
+          <span
+            class="status"
+            [class]="'status ' + (member.status === 'Ativo' ? 'active' : 'away')"
+            >{{ member.status }}</span
+          >
+          <button type="button" [attr.aria-label]="'Mais opções para ' + member.name" disabled>
+            ···
+          </button>
+        </div>
+      } @empty {
+        <p class="empty-state">Nenhuma pessoa encontrada.</p>
+      }
+    </div>
+    <footer class="team-footer">Exibindo {{ filteredMembers.length }} de 8 pessoas</footer>
+  </article>
+
+  <aside class="team-note">
+    <span aria-hidden="true">✦</span>
+    <p>
+      <strong>Um lembrete gentil</strong><br />Uma equipe bem cuidada faz cada fornada ainda mais
+      especial.
+    </p>
+  </aside>
+</section>
