@@ -5,7 +5,7 @@
       <h1>Orçamentos</h1>
       <p class="subtitle">Organize pedidos especiais e acompanhe cada negociação.</p>
     </div>
-    <button class="primary-button" type="button" disabled title="Disponível em breve">
+    <button class="primary-button" type="button" (click)="openCreate()">
       <span aria-hidden="true">＋</span> Novo orçamento
     </button>
   </header>
@@ -13,20 +13,26 @@
   <section class="summary-cards" aria-label="Resumo dos orçamentos">
     <article>
       <span class="summary-icon gold" aria-hidden="true">▤</span
-      ><span><small>Total este mês</small><strong>28</strong></span
-      ><b>+6,5%</b>
+      ><span><small>Total de orçamentos</small><strong>{{ summary.total }}</strong></span>
     </article>
     <article>
       <span class="summary-icon peach" aria-hidden="true">◷</span
-      ><span><small>Aguardando resposta</small><strong>12</strong></span
-      ><b class="neutral">4 novos</b>
+      ><span><small>Aguardando resposta</small><strong>{{ summary.pending }}</strong></span>
     </article>
     <article>
       <span class="summary-icon green" aria-hidden="true">✓</span
-      ><span><small>Convertidos em pedidos</small><strong>16</strong></span
-      ><b>57% de conversão</b>
+      ><span><small>Convertidos em pedidos</small><strong>{{ summary.converted }}</strong></span
+      ><b>{{ summary.conversion }}% de conversão</b>
     </article>
   </section>
+
+  @if (notice(); as feedback) {
+    <div class="notice" [class.notice-success]="feedback.kind === 'success'" [class.notice-error]="feedback.kind === 'error'" role="status">
+      <span aria-hidden="true">{{ feedback.kind === 'success' ? '✓' : '!' }}</span>
+      <p>{{ feedback.message }}</p>
+      <button type="button" (click)="dismissNotice()" aria-label="Fechar aviso">×</button>
+    </div>
+  }
 
   <article class="table-panel">
     <div class="table-heading">
@@ -34,85 +40,290 @@
         <h2>Todos os orçamentos</h2>
         <p>Propostas recentes para seus clientes</p>
       </div>
-      <span class="total-badge">28 propostas</span>
+      <span class="total-badge">{{ catalog().length }} propostas</span>
     </div>
     <div class="filters" aria-label="Filtrar por status">
-      @for (filter of filters; track filter) {
+      @for (filter of filters; track filter.id) {
         <button
           type="button"
-          [class.selected]="activeFilter === filter"
-          (click)="setFilter(filter)"
+          [class.selected]="selectedStatus() === filter.id"
+          (click)="setFilter(filter.id)"
         >
-          {{ filter }}
+          {{ filter.label }}
         </button>
       }
     </div>
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>Cliente</th>
-            <th>Descrição</th>
-            <th>Data</th>
-            <th>Valor</th>
-            <th>Status</th>
-            <th><span class="visually-hidden">Ações</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (budget of filteredBudgets; track budget.code) {
+    @if (loadError(); as error) {
+      <div class="load-error" role="alert">
+        <p>{{ error }}</p>
+        <button type="button" class="restock-button" (click)="retryLoad()">Tentar novamente</button>
+      </div>
+    } @else {
+      <div class="table-scroll">
+        <table>
+          <thead>
             <tr>
-              <td>
-                <span class="customer-cell"
-                  ><i>{{ budget.initials }}</i
-                  ><span
-                    ><strong>{{ budget.customer }}</strong
-                    ><small>{{ budget.code }}</small></span
-                  ></span
-                >
-              </td>
-              <td class="description">{{ budget.description }}</td>
-              <td>{{ budget.date }}</td>
-              <td class="amount">{{ budget.amount }}</td>
-              <td>
-                <span
-                  class="status"
-                  [class]="
-                    'status ' +
-                    (budget.status === 'Aprovado'
-                      ? 'approved'
-                      : budget.status === 'Recusado'
-                        ? 'declined'
-                        : 'pending')
-                  "
-                  >{{ budget.status }}</span
-                >
-              </td>
-              <td>
-                <button
-                  class="more-button"
-                  type="button"
-                  [attr.aria-label]="'Mais opções para ' + budget.code"
-                  disabled
-                >
-                  ···
-                </button>
-              </td>
+              <th>Cliente</th>
+              <th>Descrição</th>
+              <th>Data</th>
+              <th>Valor</th>
+              <th>Status</th>
+              <th><span class="visually-hidden">Ações</span></th>
             </tr>
-          } @empty {
-            <tr>
-              <td class="empty-state" colspan="6">Nenhum orçamento encontrado.</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            @if (loading()) {
+              <tr>
+                <td class="empty-state" colspan="6">Carregando orçamentos…</td>
+              </tr>
+            } @else {
+              @for (budget of filteredBudgets; track budget.id) {
+                <tr>
+                  <td>
+                    <span class="customer-cell"
+                      ><i>{{ initialsOf(budget) }}</i
+                      ><span
+                        ><strong>{{ budget.customer }}</strong
+                        ><small>{{ budget.code }}</small></span
+                      ></span
+                    >
+                  </td>
+                  <td class="description">{{ budget.description || '—' }}</td>
+                  <td>{{ formatDate(budget.date) }}</td>
+                  <td class="amount">{{ formatAmount(budget.amount) }}</td>
+                  <td>
+                    <span class="status" [class]="'status ' + statusClass(budget.status)">{{
+                      statusLabel(budget.status)
+                    }}</span>
+                  </td>
+                  <td class="row-action">
+                    <div class="row-menu">
+                      <button
+                        class="more-button"
+                        type="button"
+                        [attr.aria-label]="'Mais opções para ' + budget.code"
+                        aria-haspopup="menu"
+                        [attr.aria-expanded]="menuBudgetId() === budget.id"
+                        (click)="toggleMenu(budget, $event)"
+                      >
+                        ···
+                      </button>
+                      @if (menuBudgetId() === budget.id) {
+                        <div class="menu" role="menu">
+                          @for (action of menuActions(budget); track action.status) {
+                            <button type="button" role="menuitem" (click)="updateStatus(budget, action.status)">
+                              {{ action.label }}
+                            </button>
+                          }
+                          <button type="button" role="menuitem" class="danger" (click)="openDelete(budget)">
+                            Excluir…
+                          </button>
+                        </div>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td class="empty-state" colspan="6">Nenhum orçamento encontrado.</td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
     <footer class="table-footer">
-      <span>Mostrando {{ filteredBudgets.length }} de 28 orçamentos</span
+      <span>Mostrando {{ filteredBudgets.length }} de {{ budgets().length }} orçamentos</span
       ><span
-        >Página 1 de 5 <button disabled aria-label="Página anterior">‹</button
-        ><button disabled aria-label="Próxima página">›</button></span
+        >Página {{ page() + 1 }}
+        <button (click)="changePage(-1)" [disabled]="page() === 0" aria-label="Página anterior">‹</button
+        ><button (click)="changePage(1)" [disabled]="!hasNextPage()" aria-label="Próxima página">›</button></span
       >
     </footer>
   </article>
+
+  @if (createOpen()) {
+    <div class="modal-backdrop" (click)="closeCreate()">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="create-budget-title"
+        (click)="$event.stopPropagation()"
+      >
+        <header class="modal-header">
+          <div>
+            <p class="eyebrow">VENDAS PERSONALIZADAS</p>
+            <h2 id="create-budget-title">Novo orçamento</h2>
+          </div>
+          <button
+            type="button"
+            class="modal-close"
+            (click)="closeCreate()"
+            [disabled]="createSubmitting()"
+            aria-label="Fechar"
+          >
+            ×
+          </button>
+        </header>
+
+        <div class="form-row">
+          <label class="modal-field" for="budget-code">
+            <span>Código *</span>
+            <input
+              id="budget-code"
+              type="text"
+              maxlength="50"
+              [value]="createForm().code"
+              (input)="onCreateField('code', $event)"
+              [disabled]="createSubmitting()"
+            />
+          </label>
+          <label class="modal-field" for="budget-date">
+            <span>Data *</span>
+            <input
+              id="budget-date"
+              type="date"
+              [value]="createForm().date"
+              (input)="onCreateField('date', $event)"
+              [disabled]="createSubmitting()"
+            />
+          </label>
+        </div>
+
+        <label class="modal-field" for="budget-customer">
+          <span>Cliente *</span>
+          <input
+            id="budget-customer"
+            type="text"
+            maxlength="150"
+            placeholder="Ex.: Mariana Costa"
+            [value]="createForm().customer"
+            (input)="onCreateField('customer', $event)"
+            [disabled]="createSubmitting()"
+          />
+        </label>
+
+        <label class="modal-field" for="budget-description">
+          <span>Descrição</span>
+          <textarea
+            id="budget-description"
+            rows="2"
+            placeholder="Ex.: Mesa de doces — casamento"
+            [value]="createForm().description"
+            (input)="onCreateField('description', $event)"
+            [disabled]="createSubmitting()"
+          ></textarea>
+        </label>
+
+        <div class="form-row">
+          <label class="modal-field" for="budget-amount">
+            <span>Valor (R$) *</span>
+            <input
+              id="budget-amount"
+              type="text"
+              inputmode="decimal"
+              placeholder="0,00"
+              [value]="createForm().amount"
+              (input)="onCreateField('amount', $event)"
+              [disabled]="createSubmitting()"
+            />
+          </label>
+          <label class="modal-field" for="budget-initials">
+            <span>Iniciais</span>
+            <input
+              id="budget-initials"
+              type="text"
+              maxlength="10"
+              placeholder="Ex.: MC"
+              [value]="createForm().initials"
+              (input)="onCreateField('initials', $event)"
+              [disabled]="createSubmitting()"
+            />
+          </label>
+        </div>
+
+        <label class="modal-field" for="budget-status">
+          <span>Status</span>
+          <select
+            id="budget-status"
+            [value]="createForm().status"
+            (change)="onCreateField('status', $event)"
+            [disabled]="createSubmitting()"
+          >
+            <option value="pending">Aguardando</option>
+            <option value="approved">Aprovado</option>
+            <option value="rejected">Recusado</option>
+            <option value="paid">Pago</option>
+          </select>
+        </label>
+
+        @if (createError(); as error) {
+          <p class="modal-error" role="alert">{{ error }}</p>
+        }
+
+        <footer class="modal-actions">
+          <button
+            type="button"
+            class="modal-cancel"
+            (click)="closeCreate()"
+            [disabled]="createSubmitting()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="modal-confirm"
+            (click)="submitCreate()"
+            [disabled]="createSubmitting()"
+          >
+            {{ createSubmitting() ? 'Criando…' : 'Criar orçamento' }}
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  @if (deleteTarget(); as budget) {
+    <div class="modal-backdrop" (click)="closeDelete()">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-budget-title"
+        (click)="$event.stopPropagation()"
+      >
+        <header class="modal-header">
+          <div>
+            <p class="eyebrow">EXCLUIR</p>
+            <h2 id="delete-budget-title">Excluir orçamento</h2>
+          </div>
+          <button
+            type="button"
+            class="modal-close"
+            (click)="closeDelete()"
+            [disabled]="deleting()"
+            aria-label="Fechar"
+          >
+            ×
+          </button>
+        </header>
+
+        <p class="modal-preview">
+          Tem certeza que deseja excluir <strong>{{ budget.code }}</strong> ({{ budget.customer }})? Esta ação não
+          pode ser desfeita.
+        </p>
+
+        <footer class="modal-actions">
+          <button type="button" class="modal-cancel" (click)="closeDelete()" [disabled]="deleting()">
+            Cancelar
+          </button>
+          <button type="button" class="modal-confirm modal-danger" (click)="confirmDelete()" [disabled]="deleting()">
+            {{ deleting() ? 'Excluindo…' : 'Excluir orçamento' }}
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
 </section>

@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { Home } from './home';
 
 describe('Home', () => {
@@ -8,6 +10,7 @@ describe('Home', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Home],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Home);
@@ -53,12 +56,17 @@ describe('Home', () => {
   });
 
   it('should filter the selected management list using search', () => {
+    const httpMock = TestBed.inject(HttpTestingController);
     const element = fixture.nativeElement as HTMLElement;
     const productsTab = [...element.querySelectorAll<HTMLButtonElement>('button.nav-item')].find(
       (button) => button.textContent?.includes('Produtos'),
     );
 
     productsTab?.click();
+    fixture.detectChanges();
+
+    httpMock.expectOne('/api/categories').flush([]);
+    httpMock.match((request) => request.url === '/api/products').forEach((request) => request.flush([]));
     fixture.detectChanges();
 
     const search = element.querySelector<HTMLInputElement>('input[type="search"]');
