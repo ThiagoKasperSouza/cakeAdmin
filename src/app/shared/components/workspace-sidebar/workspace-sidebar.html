@@ -15,8 +15,8 @@
       >
         <span class="nav-icon" aria-hidden="true">{{ item.icon }}</span>
         <span>{{ item.label }}</span>
-        @if (item.id === 'budgets') {
-          <span class="nav-count">4</span>
+        @if (item.id === 'budgets' && pendingBudgets() > 0) {
+          <span class="nav-count">{{ pendingBudgets() }}</span>
         }
       </button>
     }

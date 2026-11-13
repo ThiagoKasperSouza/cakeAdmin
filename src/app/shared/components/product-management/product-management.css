@@ -324,3 +324,281 @@ tbody tr:last-child td {
     padding: 14px 10px;
   }
 }
+
+.restock-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 10px;
+  border: 1px solid #efdfc2;
+  border-radius: 7px;
+  background: #fbf3e5;
+  color: #88612e;
+  cursor: pointer;
+  font: inherit;
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.restock-button:hover {
+  background: #f6e8d2;
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 13px;
+  border-radius: 9px;
+  font-size: 11px;
+}
+
+.notice p {
+  flex: 1;
+  margin: 0;
+}
+
+.notice button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.notice-success {
+  border: 1px solid #dce9dd;
+  background: #eef5ee;
+  color: #4d7355;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(56, 37, 34, 0.45);
+}
+
+.modal {
+  display: grid;
+  width: min(430px, 100%);
+  gap: 14px;
+  padding: 20px;
+  border-radius: 12px;
+  background: var(--cream);
+  box-shadow: 0 18px 45px rgba(56, 37, 34, 0.35);
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.modal-header h2 {
+  color: var(--ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.modal-close {
+  border: 0;
+  background: transparent;
+  color: #9c8b7b;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.modal-close:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.modal-product {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  border: 1px solid #eee8df;
+  border-radius: 9px;
+  background: #fffdf8;
+}
+
+.modal-product i {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 9px;
+  background: #fbf1df;
+  font-size: 19px;
+  font-style: normal;
+}
+
+.modal-product span {
+  display: grid;
+  gap: 3px;
+}
+
+.modal-product strong {
+  color: #52443a;
+  font-size: 11px;
+}
+
+.modal-product small {
+  color: #93857a;
+  font-size: 9px;
+}
+
+.modal-field {
+  display: grid;
+  gap: 6px;
+  color: #6f6156;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.modal-field input {
+  padding: 10px 11px;
+  border: 1px solid #e6ddcf;
+  border-radius: 8px;
+  background: #fffdf8;
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+}
+
+.modal-field input:focus {
+  outline: 2px solid #efdfc2;
+  outline-offset: 1px;
+}
+
+.modal-preview {
+  color: #817569;
+  font-size: 10px;
+}
+
+.modal-preview strong {
+  color: var(--ink);
+}
+
+.modal-error {
+  padding: 9px 11px;
+  border: 1px solid #f0d6d0;
+  border-radius: 8px;
+  background: #faf0ed;
+  color: #a45e50;
+  font-size: 10px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.modal-cancel,
+.modal-confirm {
+  padding: 10px 13px;
+  border-radius: 7px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.modal-cancel {
+  border: 1px solid #e6ddcf;
+  background: transparent;
+  color: #806b56;
+}
+
+.modal-confirm {
+  border: 0;
+  background: var(--gold);
+  color: var(--wine);
+}
+
+.modal-cancel:disabled,
+.modal-confirm:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.product-thumb,
+.modal-thumb {
+  width: 31px;
+  height: 31px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #fbf1df;
+}
+
+.modal-thumb {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+}
+
+.load-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 16px 13px;
+  color: #a45e50;
+  font-size: 11px;
+}
+
+.load-error p {
+  margin: 0;
+}
+
+.table-footer button:not(:disabled) {
+  cursor: pointer;
+}
+
+.table-footer button:not(:disabled):hover {
+  color: var(--ink);
+}
+
+.modal {
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.modal-field select,
+.modal-field textarea {
+  padding: 10px 11px;
+  border: 1px solid #e6ddcf;
+  border-radius: 8px;
+  background: #fffdf8;
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+}
+
+.modal-field textarea {
+  resize: vertical;
+}
+
+.modal-field select:focus,
+.modal-field textarea:focus {
+  outline: 2px solid #efdfc2;
+  outline-offset: 1px;
+}

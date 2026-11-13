@@ -5,7 +5,7 @@
       <h1>Produtos</h1>
       <p class="subtitle">Gerencie os produtos que fazem parte do seu dia a dia.</p>
     </div>
-    <button class="primary-button" type="button" disabled title="Disponível em breve">
+    <button class="primary-button" type="button" (click)="openCreate()">
       <span aria-hidden="true">＋</span> Novo produto
     </button>
   </header>
@@ -13,17 +13,25 @@
   <section class="summary-cards" aria-label="Resumo do catálogo">
     <article>
       <span class="summary-icon gold" aria-hidden="true">▧</span
-      ><span><small>Total de produtos</small><strong>36</strong></span>
+      ><span><small>Total de produtos</small><strong>{{ summary().total }}</strong></span>
     </article>
     <article>
       <span class="summary-icon green" aria-hidden="true">✓</span
-      ><span><small>Disponíveis</small><strong>31</strong></span>
+      ><span><small>Disponíveis</small><strong>{{ summary().available }}</strong></span>
     </article>
     <article>
       <span class="summary-icon rose" aria-hidden="true">!</span
-      ><span><small>Estoque baixo</small><strong>3</strong></span>
+      ><span><small>Estoque baixo</small><strong>{{ summary().low }}</strong></span>
     </article>
   </section>
+
+  @if (notice(); as message) {
+    <div class="notice notice-success" role="status">
+      <span aria-hidden="true">✓</span>
+      <p>{{ message }}</p>
+      <button type="button" (click)="dismissNotice()" aria-label="Fechar aviso">×</button>
+    </div>
+  }
 
   <article class="table-panel">
     <div class="table-heading">
@@ -36,78 +44,338 @@
       </button>
     </div>
     <div class="filters" aria-label="Filtrar por categoria">
-      @for (filter of filters; track filter) {
+      @for (filter of categoryFilters; track filter.id) {
         <button
           type="button"
-          [class.selected]="activeFilter === filter"
-          (click)="setFilter(filter)"
+          [class.selected]="selectedCategoryId() === filter.id"
+          (click)="setFilter(filter.id)"
         >
-          {{ filter }}
+          {{ filter.label }}
         </button>
       }
     </div>
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>Produto</th>
-            <th>Categoria</th>
-            <th>Preço</th>
-            <th>Estoque</th>
-            <th>Status</th>
-            <th><span class="visually-hidden">Ações</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (product of filteredProducts; track product.name) {
+    @if (loadError(); as error) {
+      <div class="load-error" role="alert">
+        <p>{{ error }}</p>
+        <button type="button" class="restock-button" (click)="retryLoad()">Tentar novamente</button>
+      </div>
+    } @else {
+      <div class="table-scroll">
+        <table>
+          <thead>
             <tr>
-              <td>
-                <span class="product-cell"
-                  ><i aria-hidden="true">{{ product.icon }}</i
-                  ><strong>{{ product.name }}</strong></span
-                >
-              </td>
-              <td>{{ product.category }}</td>
-              <td class="price">{{ product.price }}</td>
-              <td>{{ product.stock }} un.</td>
-              <td>
-                <span
-                  class="status"
-                  [class]="
-                    'status ' +
-                    (product.status === 'Disponível'
-                      ? 'available'
-                      : product.status === 'Estoque baixo'
-                        ? 'low'
-                        : 'unavailable')
-                  "
-                  >{{ product.status }}</span
-                >
-              </td>
-              <td class="row-action">
-                <button
-                  type="button"
-                  [attr.aria-label]="'Mais opções para ' + product.name"
-                  disabled
-                >
-                  ···
-                </button>
-              </td>
+              <th>Produto</th>
+              <th>Categoria</th>
+              <th>Preço</th>
+              <th>Estoque</th>
+              <th>Status</th>
+              <th><span class="visually-hidden">Ações</span></th>
             </tr>
-          } @empty {
-            <tr>
-              <td class="empty-state" colspan="6">Nenhum produto encontrado.</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            @if (loading()) {
+              <tr>
+                <td class="empty-state" colspan="6">Carregando produtos…</td>
+              </tr>
+            } @else {
+              @for (product of filteredProducts; track product.id) {
+                <tr>
+                  <td>
+                    <span class="product-cell">
+                      @if (product.image_url && !imageFailed(product.id)) {
+                        <img
+                          class="product-thumb"
+                          [src]="product.image_url"
+                          [alt]="product.name"
+                          loading="lazy"
+                          (error)="markImageFailed(product.id)"
+                        />
+                      } @else {
+                        <i aria-hidden="true">{{ categoryIcon(product.category_id) }}</i>
+                      }
+                      <strong>{{ product.name }}</strong></span
+                    >
+                  </td>
+                  <td>{{ categoryLabel(product.category_id) }}</td>
+                  <td class="price">{{ formatPrice(product.price) }}</td>
+                  <td>{{ product.stock }} un.</td>
+                  <td>
+                    <span class="status" [class]="'status ' + statusClass(product)">{{
+                      statusOf(product)
+                    }}</span>
+                  </td>
+                  <td class="row-action">
+                    <button
+                      type="button"
+                      class="restock-button"
+                      [attr.aria-label]="'Reestocar ' + product.name"
+                      (click)="openRestock(product)"
+                    >
+                      <span aria-hidden="true">＋</span> Reestocar
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td class="empty-state" colspan="6">Nenhum produto encontrado.</td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
     <footer class="table-footer">
-      <span>Mostrando {{ filteredProducts.length }} de 36 produtos</span
-      ><span
-        >Página 1 de 4 <button disabled aria-label="Página anterior">‹</button
-        ><button disabled aria-label="Próxima página">›</button></span
-      >
+      <span>Mostrando {{ filteredProducts.length }} de {{ products().length }} produtos</span>
+      <span>
+        Página {{ page() + 1 }}
+        <button (click)="changePage(-1)" [disabled]="page() === 0" aria-label="Página anterior">
+          ‹
+        </button>
+        <button (click)="changePage(1)" [disabled]="!hasNextPage()" aria-label="Próxima página">
+          ›
+        </button>
+      </span>
     </footer>
   </article>
+
+  @if (createOpen()) {
+    <div class="modal-backdrop" (click)="closeCreate()">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="create-title"
+        (click)="$event.stopPropagation()"
+      >
+        <header class="modal-header">
+          <div>
+            <p class="eyebrow">CATÁLOGO</p>
+            <h2 id="create-title">Novo produto</h2>
+          </div>
+          <button
+            type="button"
+            class="modal-close"
+            (click)="closeCreate()"
+            [disabled]="createSubmitting()"
+            aria-label="Fechar"
+          >
+            ×
+          </button>
+        </header>
+
+        <label class="modal-field" for="create-name">
+          <span>Nome *</span>
+          <input
+            #nameInput
+            id="create-name"
+            type="text"
+            maxlength="150"
+            placeholder="Ex.: Bolo de fubá cremoso"
+            [value]="createForm().name"
+            (input)="onCreateField('name', $event)"
+            [disabled]="createSubmitting()"
+          />
+        </label>
+
+        <label class="modal-field" for="create-description">
+          <span>Descrição</span>
+          <textarea
+            id="create-description"
+            rows="2"
+            placeholder="Descreva o produto em poucas palavras"
+            [value]="createForm().description"
+            (input)="onCreateField('description', $event)"
+            [disabled]="createSubmitting()"
+          ></textarea>
+        </label>
+
+        <div class="form-row">
+          <label class="modal-field" for="create-price">
+            <span>Preço (R$) *</span>
+            <input
+              id="create-price"
+              type="number"
+              min="0"
+              step="0.01"
+              inputmode="decimal"
+              placeholder="0,00"
+              [value]="createForm().price"
+              (input)="onCreateField('price', $event)"
+              [disabled]="createSubmitting()"
+            />
+          </label>
+          <label class="modal-field" for="create-stock">
+            <span>Estoque *</span>
+            <input
+              id="create-stock"
+              type="number"
+              min="0"
+              step="1"
+              inputmode="numeric"
+              placeholder="0"
+              [value]="createForm().stock"
+              (input)="onCreateField('stock', $event)"
+              [disabled]="createSubmitting()"
+            />
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label class="modal-field" for="create-category">
+            <span>Categoria *</span>
+            <select
+              id="create-category"
+              [value]="createForm().category_id"
+              (change)="onCreateField('category_id', $event)"
+              [disabled]="createSubmitting()"
+            >
+              <option value="">Selecione…</option>
+              @for (category of createCategoryOptions(); track category.id) {
+                <option [value]="category.id">{{ category.icon }} {{ category.label }}</option>
+              }
+            </select>
+          </label>
+          <label class="modal-field" for="create-rating">
+            <span>Avaliação (0–5)</span>
+            <input
+              id="create-rating"
+              type="number"
+              min="0"
+              max="5"
+              step="0.1"
+              inputmode="decimal"
+              placeholder="Ex.: 4,8"
+              [value]="createForm().rating"
+              (input)="onCreateField('rating', $event)"
+              [disabled]="createSubmitting()"
+            />
+          </label>
+        </div>
+
+        <label class="modal-field" for="create-image">
+          <span>URL da imagem</span>
+          <input
+            id="create-image"
+            type="url"
+            maxlength="500"
+            placeholder="https://…"
+            [value]="createForm().image_url"
+            (input)="onCreateField('image_url', $event)"
+            [disabled]="createSubmitting()"
+          />
+        </label>
+
+        @if (createError(); as error) {
+          <p class="modal-error" role="alert">{{ error }}</p>
+        }
+
+        <footer class="modal-actions">
+          <button
+            type="button"
+            class="modal-cancel"
+            (click)="closeCreate()"
+            [disabled]="createSubmitting()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="modal-confirm"
+            (click)="submitCreate()"
+            [disabled]="createSubmitting()"
+          >
+            {{ createSubmitting() ? 'Criando…' : 'Criar produto' }}
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  @if (restockTarget(); as product) {
+    <div class="modal-backdrop" (click)="closeRestock()">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="restock-title"
+        (click)="$event.stopPropagation()"
+      >
+        <header class="modal-header">
+          <div>
+            <p class="eyebrow">REESTOCAGEM</p>
+            <h2 id="restock-title">Reestocar produto</h2>
+          </div>
+          <button
+            type="button"
+            class="modal-close"
+            (click)="closeRestock()"
+            [disabled]="submitting()"
+            aria-label="Fechar"
+          >
+            ×
+          </button>
+        </header>
+
+        <div class="modal-product">
+          @if (product.image_url && !imageFailed(product.id)) {
+            <img
+              class="modal-thumb"
+              [src]="product.image_url"
+              [alt]="product.name"
+              (error)="markImageFailed(product.id)"
+            />
+          } @else {
+            <i aria-hidden="true">{{ categoryIcon(product.category_id) }}</i>
+          }
+          <span>
+            <strong>{{ product.name }}</strong>
+            <small>{{ categoryLabel(product.category_id) }} · Estoque atual: {{ product.stock }} un.</small>
+          </span>
+        </div>
+
+        <label class="modal-field" for="restock-quantity">
+          <span>Quantidade a adicionar</span>
+          <input
+            #qtyInput
+            id="restock-quantity"
+            type="number"
+            min="1"
+            step="1"
+            inputmode="numeric"
+            [value]="quantityInput()"
+            (input)="onQuantityInput($event)"
+            [disabled]="submitting()"
+          />
+        </label>
+
+        <p class="modal-preview">
+          Novo estoque após a reestocagem: <strong>{{ newStockPreview() }} un.</strong>
+        </p>
+
+        @if (restockError(); as error) {
+          <p class="modal-error" role="alert">{{ error }}</p>
+        }
+
+        <footer class="modal-actions">
+          <button
+            type="button"
+            class="modal-cancel"
+            (click)="closeRestock()"
+            [disabled]="submitting()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="modal-confirm"
+            (click)="confirmRestock()"
+            [disabled]="submitting()"
+          >
+            {{ submitting() ? 'Reestocando…' : 'Confirmar reestocagem' }}
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
 </section>
