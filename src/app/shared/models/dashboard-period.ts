@@ -1,7 +1,1 @@
-export type DashboardPeriod = 'day' | 'week' | 'month';
-
-export interface DashboardDataPoint {
-  label: string;
-  sales: number;
-  orders: number;
-}
+export type { DashboardPeriod, DashboardDataPoint } from './overview';

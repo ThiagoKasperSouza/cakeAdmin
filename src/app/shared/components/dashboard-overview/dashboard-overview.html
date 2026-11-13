@@ -1,10 +1,10 @@
 <div class="overview">
   <header class="page-heading">
     <div>
-      <p class="eyebrow">QUINTA-FEIRA, 12 DE NOVEMBRO DE 2026</p>
-      <h1>Bom dia, Thiago <span aria-hidden="true">☀</span></h1>
+      <p class="eyebrow">{{ headingDate() }}</p>
+      <h1>{{ greeting() }} <span aria-hidden="true">☀</span></h1>
       <p class="subtitle">
-        Resumo de {{ periodLabel().toLowerCase() }} · dados até 12 de novembro.
+        Resumo de {{ periodLabel().toLowerCase() }} · dados até {{ todayShort() }}.
       </p>
     </div>
     <label class="period-control">
@@ -14,7 +14,7 @@
         [value]="selectedPeriod()"
         (change)="setPeriod($event)"
       >
-        <option value="day">Hoje · 12 nov.</option>
+        <option value="day">Hoje · {{ todayShort() }}</option>
         <option value="week">Últimos 7 dias</option>
         <option value="month">Este mês</option>
       </select>
@@ -22,102 +22,105 @@
     </label>
   </header>
 
-  <section class="metrics" aria-label="Indicadores principais">
-    <app-metric-card
-      icon="↗"
-      label="Vendas no período"
-      [value]="dashboardData().sales"
-      change=""
-      [detail]="periodLabel().toLowerCase()"
-      tone="gold"
-    />
-    <app-metric-card
-      icon="▤"
-      label="Pedidos no período"
-      [value]="dashboardData().orders"
-      change=""
-      detail="pedidos recebidos"
-      tone="peach"
-    />
-    <app-metric-card
-      icon="◷"
-      label="Orçamentos no período"
-      [value]="dashboardData().quotes"
-      change=""
-      detail="solicitações recebidas"
-      tone="rose"
-    />
-    <app-metric-card
-      icon="▧"
-      label="Ticket médio"
-      [value]="dashboardData().averageOrder"
-      change=""
-      detail="por pedido"
-      tone="cream"
-    />
-  </section>
+  @if (loadError(); as error) {
+    <div class="load-error" role="alert">
+      <p>{{ error }}</p>
+      <button type="button" class="retry-button" (click)="retryLoad()">Tentar novamente</button>
+    </div>
+  } @else if (view(); as data) {
+    <section class="metrics" aria-label="Indicadores principais">
+      <app-metric-card
+        icon="↗"
+        label="Vendas no período"
+        [value]="data.sales"
+        change=""
+        [detail]="periodLabel().toLowerCase()"
+        tone="gold"
+      />
+      <app-metric-card
+        icon="▤"
+        label="Pedidos no período"
+        [value]="data.orders"
+        change=""
+        detail="pedidos recebidos"
+        tone="peach"
+      />
+      <app-metric-card
+        icon="◷"
+        label="Orçamentos no período"
+        [value]="data.quotes"
+        change=""
+        detail="solicitações recebidas"
+        tone="rose"
+      />
+      <app-metric-card
+        icon="▧"
+        label="Ticket médio"
+        [value]="data.averageOrder"
+        change=""
+        detail="por pedido"
+        tone="cream"
+      />
+    </section>
 
-  <section class="charts-grid" aria-label="Resumo de vendas">
-    <app-sales-chart
-      class="sales-card"
-      [points]="dashboardData().points"
-      [periodLabel]="periodLabel()"
-    />
-    <app-order-summary
-      class="orders-card"
-      [points]="dashboardData().points"
-      [totalOrders]="dashboardData().ordersTotal"
-      [periodLabel]="periodLabel()"
-    />
-  </section>
+    <section class="charts-grid" aria-label="Resumo de vendas">
+      <app-sales-chart
+        class="sales-card"
+        [points]="data.points"
+        [periodLabel]="periodLabel()"
+      />
+      <app-order-summary
+        class="orders-card"
+        [points]="data.points"
+        [totalOrders]="data.ordersTotal"
+        [periodLabel]="periodLabel()"
+      />
+    </section>
 
-  <section class="bottom-grid">
-    <article class="panel popular-products">
-      <div class="panel-heading">
-        <div>
-          <h2>Mais vendidos no período</h2>
-          <p>Produtos em destaque: {{ periodLabel().toLowerCase() }}</p>
-        </div>
-      </div>
-      <div class="product-list">
-        @for (product of dashboardData().products; track product.name) {
-          <div class="product-row">
-            <span class="product-art" [class]="'product-art ' + product.art" aria-hidden="true">
-              {{ product.icon }}
-            </span>
-            <span class="product-name">
-              <strong>{{ product.name }}</strong><small>{{ product.category }}</small>
-            </span>
-            <span class="product-sold">{{ product.sold }} vendidos</span>
-            <strong class="product-price">{{ product.price }}</strong>
+    <section class="bottom-grid">
+      <article class="panel popular-products">
+        <div class="panel-heading">
+          <div>
+            <h2>Maiores orçamentos pagos</h2>
+            <p>Ranking por valor no período</p>
           </div>
-        }
-      </div>
-    </article>
-
-    <article class="panel stock-panel">
-      <div class="panel-heading">
-        <div>
-          <h2>Estoque baixo</h2>
-          <p>Produtos que precisam de atenção</p>
         </div>
-        <span class="stock-alert">3 itens</span>
-      </div>
-      <div class="stock-item">
-        <span class="stock-dot"></span
-        ><span><strong>Farinha de trigo</strong><small>Padaria</small></span
-        ><b>2 kg</b>
-      </div>
-      <div class="stock-item">
-        <span class="stock-dot"></span
-        ><span><strong>Chocolate 70%</strong><small>Confeitaria</small></span
-        ><b>1,5 kg</b>
-      </div>
-      <div class="stock-item">
-        <span class="stock-dot"></span
-        ><span><strong>Amêndoas laminadas</strong><small>Confeitaria</small></span
-        ><b>800 g</b>
-      </div>
-    </article>
-  </section>
+        <div class="product-list">
+          @for (budget of data.topPaid; track budget.id) {
+            <div class="product-row paid-row">
+              <span class="product-art cake" aria-hidden="true">▤</span>
+              <span class="product-name">
+                <strong>{{ budget.customer }}</strong>
+                <small>{{ budget.code }} · {{ formatShortDate(budget.date) }}</small>
+              </span>
+              <strong class="product-price">{{ formatCurrency(budget.amount, 2) }}</strong>
+            </div>
+          } @empty {
+            <div class="empty-panel">Nenhum orçamento pago no período.</div>
+          }
+        </div>
+      </article>
+
+      <article class="panel stock-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Estoque baixo</h2>
+            <p>Produtos que precisam de atenção</p>
+          </div>
+          <span class="stock-alert">{{ data.lowStock.length }} {{ data.lowStock.length === 1 ? 'item' : 'itens' }}</span>
+        </div>
+        @for (product of data.lowStock; track product.id) {
+          <div class="stock-item">
+            <span class="stock-dot"></span
+            ><span><strong>{{ product.name }}</strong><small>{{ product.category_label }}</small></span
+            ><b>{{ product.stock }} un.</b>
+          </div>
+        } @empty {
+          <div class="empty-panel">Tudo com estoque saudável.</div>
+        }
+      </article>
+    </section>
+  } @else {
+    <div class="loading-panel" aria-live="polite">Carregando dados do dashboard…</div>
+  }
 </div>

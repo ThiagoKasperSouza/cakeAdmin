@@ -3,9 +3,37 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { Home } from './home';
 
+const EMPTY_OVERVIEW = {
+  period: 'week',
+  window: { from: '2026-11-07', to: '2026-11-13' },
+  sales_total: 0,
+  orders_count: 0,
+  quotes_count: 0,
+  average_ticket: 0,
+  series: [
+    { date: '2026-11-07', label: '07', sales: 0, orders: 0, quotes: 0 },
+    { date: '2026-11-08', label: '08', sales: 0, orders: 0, quotes: 0 },
+    { date: '2026-11-09', label: '09', sales: 0, orders: 0, quotes: 0 },
+    { date: '2026-11-10', label: '10', sales: 0, orders: 0, quotes: 0 },
+    { date: '2026-11-11', label: '11', sales: 0, orders: 0, quotes: 0 },
+    { date: '2026-11-12', label: '12', sales: 0, orders: 0, quotes: 0 },
+    { date: '2026-11-13', label: '13', sales: 0, orders: 0, quotes: 0 },
+  ],
+  top_paid: [],
+  low_stock: [],
+};
+
+const CURRENT_USER = {
+  id: 1,
+  name: 'Thiago',
+  email_address: 'user@example.com',
+  is_active: true,
+};
+
 describe('Home', () => {
   let component: Home;
   let fixture: ComponentFixture<Home>;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -13,8 +41,11 @@ describe('Home', () => {
       providers: [provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
 
+    httpMock = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(Home);
     component = fixture.componentInstance;
+    httpMock.match('/api/metrics/overview').forEach((request) => request.flush(EMPTY_OVERVIEW));
+    httpMock.match('/api/users/me').forEach((request) => request.flush(CURRENT_USER));
     await fixture.whenStable();
   });
 
@@ -26,7 +57,7 @@ describe('Home', () => {
     const element = fixture.nativeElement as HTMLElement;
 
     expect(element.querySelector('app-dashboard-overview')).toBeTruthy();
-    expect(element.textContent).toContain('Bom dia, Thiago');
+    expect(element.textContent).toContain('Thiago');
   });
 
   it('should switch to product management', () => {
@@ -56,7 +87,6 @@ describe('Home', () => {
   });
 
   it('should filter the selected management list using search', () => {
-    const httpMock = TestBed.inject(HttpTestingController);
     const element = fixture.nativeElement as HTMLElement;
     const productsTab = [...element.querySelectorAll<HTMLButtonElement>('button.nav-item')].find(
       (button) => button.textContent?.includes('Produtos'),
