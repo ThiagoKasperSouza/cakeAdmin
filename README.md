@@ -57,3 +57,22 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Desktop interno (Electron)
+
+Wrapper interno do painel: a SPA roda numa janela Electron e o processo principal serve o bundle estático com proxy de `/api/*` para a API (padrão `http://localhost:8000`, configurável via `CAKE_API_URL`). Sem auto-update e sem assinatura de código (uso interno).
+
+```bash
+# desenvolvimento (Angular em :4200 + janela apontando para ele)
+npm run electron:dev   # requer `npm start` em outro terminal
+
+# build + janela (bundle estático servido pelo Electron)
+npm run electron:start
+
+# gerar pacote unpacked em release/linux-unpacked (AppImage/dir no config)
+npm run electron:dist
+```
+
+Notas:
+- Em máquinas Linux onde `chrome-sandbox`/user namespaces não estão disponíveis, rode com `--no-sandbox` (limitação da máquina, não do app).
+- `release/` é gerado on-demand e está no `.gitignore`.
