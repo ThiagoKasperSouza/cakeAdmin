@@ -252,3 +252,53 @@ h1 span {
     display: none;
   }
 }
+
+.load-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid #f0d6d0;
+  border-radius: 11px;
+  background: #faf0ed;
+  color: #a45e50;
+  font-size: 12px;
+}
+
+.load-error p {
+  margin: 0;
+}
+
+.retry-button {
+  padding: 8px 12px;
+  border: 1px solid #e8c7bf;
+  border-radius: 7px;
+  background: transparent;
+  color: #a45e50;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.loading-panel {
+  padding: 40px 20px;
+  border: 1px dashed #eee8df;
+  border-radius: 11px;
+  color: #a19589;
+  font-size: 12px;
+  text-align: center;
+}
+
+.empty-panel {
+  padding: 28px 12px;
+  color: #a19589;
+  font-size: 11px;
+  text-align: center;
+}
+
+.paid-row {
+  grid-template-columns: 35px minmax(0, 1fr) auto;
+}

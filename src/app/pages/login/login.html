@@ -16,6 +16,7 @@
             placeholder="Digite seu e-mail"
             autocomplete="email"
             required
+            [disabled]="submitting()"
           />
 
           <div class="password-label">
@@ -31,14 +32,21 @@
             placeholder="Digite sua senha"
             autocomplete="current-password"
             required
+            [disabled]="submitting()"
           />
 
           <label class="remember-option">
-            <input name="remember" type="checkbox" />
+            <input name="remember" type="checkbox" [disabled]="submitting()" />
             <span>Lembrar de mim</span>
           </label>
 
-          <button class="sign-in-button" type="submit">Entrar</button>
+          @if (error(); as message) {
+            <p class="form-error" role="alert">{{ message }}</p>
+          }
+
+          <button class="sign-in-button" type="submit" [disabled]="submitting()">
+            {{ submitting() ? 'Entrando…' : 'Entrar' }}
+          </button>
         </form>
 
         <div class="divider"><span>Ou entre com</span></div>
